@@ -1,0 +1,17 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/EmployeesHandler/CopilotIndices/17.14.878.3237
+/.vs/EmployeesHandler/v17
+/.vs
+/EmployeeManagement/.vs/EmployeeManagement/CopilotIndices/17.14.878.3237
+/EmployeeManagement/.vs/EmployeeManagement/DesignTimeBuild
+/EmployeeManagement/.vs/EmployeeManagement/FileContentIndex
+/EmployeeManagement/.vs/EmployeeManagement/v17
+/EmployeeManagement/EmployeeManagement.Application/bin/Debug/net8.0
+/EmployeeManagement/EmployeeManagement.Application/obj
+/EmployeeManagement/EmployeeManagement.Domain/bin/Debug/net8.0
+/EmployeeManagement/EmployeeManagement.Domain/obj
+/EmployeeManagement/EmployeeManagement.Infrastructure/obj
+/EmployeeManagement/EmployeeManagement.Infrastructure/bin/Debug/net8.0
