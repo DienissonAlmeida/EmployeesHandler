@@ -1,4 +1,5 @@
-﻿using EmployeeManagement.Domain.Entities;
+﻿using EmployeeManagement.Domain.Dtos;
+using EmployeeManagement.Domain.Entities;
 
 namespace EmployeeManagement.Domain.Contracts
 {
@@ -6,7 +7,7 @@ namespace EmployeeManagement.Domain.Contracts
     {
         Task AddAsync(Employee employee);
         Task<Employee?> GetByIdAsync(Guid id);
-        Task<IEnumerable<Employee>> GetAllAsync();
+        Task<List<EmployeeDto>> GetAllAsync();
         Task UpdateAsync(Employee employee);
         Task DeleteAsync(Guid id);
         Task SaveChangesAsync();

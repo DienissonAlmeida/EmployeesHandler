@@ -1,7 +1,7 @@
 ﻿using EmployeeManagement.Application.Commands;
 using EmployeeManagement.Application.Contracts;
-using EmployeeManagement.Application.Dtos;
 using EmployeeManagement.Domain.Contracts;
+using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
 
 namespace EmployeeManagement.Application.Services
@@ -43,6 +43,11 @@ namespace EmployeeManagement.Application.Services
             await _repository.SaveChangesAsync();
 
             return MapToDto(entity);
+        }
+
+        public async Task<List<EmployeeDto>> GetAllAsync()
+        {
+            return await _repository.GetAllAsync();
         }
 
         private EmployeeDto MapToDto(Employee e) => new()

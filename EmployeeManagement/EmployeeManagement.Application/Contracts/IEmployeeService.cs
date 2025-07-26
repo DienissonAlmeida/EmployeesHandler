@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EmployeeManagement.Application.Commands;
-using EmployeeManagement.Application.Dtos;
+﻿using EmployeeManagement.Application.Commands;
+using EmployeeManagement.Domain.Dtos;
 
 namespace EmployeeManagement.Application.Contracts
 {
@@ -16,5 +11,6 @@ namespace EmployeeManagement.Application.Contracts
         //Task<IEnumerable<EmployeeDto>> GetAllAsync();
         //Task DeleteAsync(Guid id);
         //Task UpdateAsync(Guid id, CreateEmployeeCommand request);
+        Task<List<EmployeeDto>> GetAllAsync();
     }
 }

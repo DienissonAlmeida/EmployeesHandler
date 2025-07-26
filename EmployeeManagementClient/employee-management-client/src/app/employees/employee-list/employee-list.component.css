@@ -1,0 +1,5 @@
+.table-container {
+  max-width: 900px;  /* or any width you prefer */
+  margin: 2rem auto; /* centers horizontally and adds top/bottom space */
+  padding: 0 1rem;   /* some horizontal padding */
+}

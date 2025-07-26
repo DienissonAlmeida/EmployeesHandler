@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EmployeeManagement.Domain.Contracts;
+using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
 using EmployeeManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -32,10 +33,21 @@ namespace EmployeeManagement.Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<Employee>> GetAllAsync()
+        public async Task<List<EmployeeDto>> GetAllAsync()
         {
             return await _context.Employees
-                .Include(e => e.Manager)
+                .Select(x => new EmployeeDto()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    BirthDate = x.BirthDate,
+                    DocumentNumber = x.DocumentNumber,
+                    Email = x.Email,
+                    PhoneNumbers = x.PhoneNumbers,
+                    Role = x.Role.ToString(),
+                    ManagerId = x.ManagerId
+                })
                 .ToListAsync();
         }
 
