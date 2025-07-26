@@ -1,4 +1,4 @@
-﻿namespace EmployeeManagement.Application.Dtos
+﻿namespace EmployeeManagement.Domain.Dtos
 {
     public class EmployeeDto
     {

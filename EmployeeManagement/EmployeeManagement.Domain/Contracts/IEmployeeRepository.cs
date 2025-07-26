@@ -9,5 +9,6 @@ namespace EmployeeManagement.Domain.Contracts
         Task<IEnumerable<Employee>> GetAllAsync();
         Task UpdateAsync(Employee employee);
         Task DeleteAsync(Guid id);
+        Task SaveChangesAsync();
     }
 }
