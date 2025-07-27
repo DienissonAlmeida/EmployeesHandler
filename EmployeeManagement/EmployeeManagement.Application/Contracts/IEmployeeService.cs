@@ -7,11 +7,8 @@ namespace EmployeeManagement.Application.Contracts
     {
         //We can use a result pattern here, but for simplicity, we will return the DTO directly.
         Task<EmployeeDto> CreateAsync(CreateEmployeeCommand request, Guid currentUserId);
-        //Task<EmployeeDto?> GetByIdAsync(Guid id);
-        //Task<IEnumerable<EmployeeDto>> GetAllAsync();
-        //Task DeleteAsync(Guid id);
-        //Task UpdateAsync(Guid id, CreateEmployeeCommand request);
         Task<List<EmployeeDto>> GetAllAsync();
         Task DeleteAsync(Guid id);
+        Task UpdateAsync(Guid id, CreateEmployeeCommand request);
     }
 }

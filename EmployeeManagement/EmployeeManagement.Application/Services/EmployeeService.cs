@@ -55,6 +55,17 @@ namespace EmployeeManagement.Application.Services
             await _repository.DeleteAsync(id);
         }
 
+        public async Task UpdateAsync(Guid id, CreateEmployeeCommand request)
+        {
+            var employeeToUpdate = await _repository.GetByIdAsync(id);
+
+            employeeToUpdate!.UpdateProperties(request);
+
+            _repository.UpdateAsync(employeeToUpdate);
+
+            await _repository.SaveChangesAsync();
+        }
+
         private EmployeeDto MapToDto(Employee e) => new()
         {
             Id = e.Id,

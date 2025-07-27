@@ -11,6 +11,7 @@
         public Guid? ManagerId { get; set; }
         public DateTime BirthDate { get; set; }
         public string Role { get; set; } = null!;
+        public string Password { get; set; } = null!;
     }
 
 }

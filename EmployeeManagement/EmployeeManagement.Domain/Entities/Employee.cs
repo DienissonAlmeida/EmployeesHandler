@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using EmployeeManagement.Application.Commands;
 
 namespace EmployeeManagement.Domain.Entities
 {
@@ -25,6 +26,18 @@ namespace EmployeeManagement.Domain.Entities
             var age = today.Year - BirthDate.Year;
             if (BirthDate.Date > today.AddYears(-age)) age--;
             return age;
+        }
+
+        public void UpdateProperties(CreateEmployeeCommand request)
+        {
+            FirstName = request.FirstName;
+            LastName = request.LastName;
+            Email = request.Email;
+            PhoneNumbers = request.PhoneNumbers;
+            DocumentNumber = request.DocumentNumber;
+            ManagerId = request.ManagerId;
+            PasswordHash = request.Password;
+            Role = (Role)Enum.Parse(typeof(Role), request.Role);
         }
     }
 

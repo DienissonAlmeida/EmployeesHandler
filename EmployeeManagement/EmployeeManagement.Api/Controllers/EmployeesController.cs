@@ -46,12 +46,12 @@ namespace EmployeeManagement.Api.Controllers
             return Ok(result);
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(Guid id, [FromBody] CreateEmployeeRequest request)
-        //{
-        //    await _service.UpdateAsync(id, request);
-        //    return NoContent();
-        //}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] CreateEmployeeCommand request)
+        {
+            await _service.UpdateAsync(id, request);
+            return NoContent();
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)

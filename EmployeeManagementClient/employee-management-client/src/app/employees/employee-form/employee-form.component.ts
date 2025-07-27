@@ -113,6 +113,7 @@ export class EmployeeFormComponent implements OnChanges {
     if (this.employeeForm.valid) {
       if (this.employee) {
         const updatedEmployee: EmployeeDto = this.employeeForm.value;
+        updatedEmployee.id = this.employee.id;
         this.employeeService.update(updatedEmployee).subscribe({
           next: () => {
             console.log('Employee created');

@@ -46,15 +46,15 @@ namespace EmployeeManagement.Infrastructure.Repositories
                     Email = x.Email,
                     PhoneNumbers = x.PhoneNumbers,
                     Role = x.Role.ToString(),
-                    ManagerId = x.ManagerId
+                    ManagerId = x.ManagerId,
+                    Password = x.PasswordHash
                 })
                 .ToListAsync();
         }
 
-        public async Task UpdateAsync(Employee employee)
+        public void UpdateAsync(Employee employee)
         {
             _context.Employees.Update(employee);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<int> DeleteAsync(Guid id)

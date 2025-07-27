@@ -23,3 +23,6 @@
 /EmployeeManagementClient/employee-management-client/public/favicon.ico
 /EmployeeManagement/obj/Sagittarius.Infrastructure.EntityFrameworkCore.targets
 /EmployeeManagement/EmployeeManagement.Api/EmployeeManagement.Api.csproj.user
+/EmployeeManagement/EmployeeManagement.Tests/obj/Debug/net8.0
+/EmployeeManagement/EmployeeManagement.Tests/bin/Debug/net8.0
+/EmployeeManagement/EmployeeManagement.Tests/obj
