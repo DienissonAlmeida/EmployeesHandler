@@ -80,5 +80,15 @@ namespace EmployeeManagement.Infrastructure.Repositories
         {
             return await _context.Employees.AnyAsync(x => x.Id == managerId);
         }
+        public async Task<Role> GetRoleById(Guid id)
+        {
+            return await _context.Employees
+                .Where(x => x.Id == id)
+                .Select(x => x.Role)
+                .SingleOrDefaultAsync();
+        }
+
     }
+
+
 }

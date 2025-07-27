@@ -2,7 +2,7 @@
     <span>Employees</span>
     <span class="spacer"></span>
     <!-- <button mat-raised-button color="accent"> -->
-    <button mat-raised-button color="accent" [routerLink]="['/employees/new']">
+    <button mat-raised-button color="accent" (click)="goToNewEmployee()">
         + New Employee
     </button>
 </mat-toolbar>

@@ -9,8 +9,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { EmployeeDto, EmployeeService } from '../../core/employee.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 // @Component({
 //   selector: 'app-employee-form',
@@ -30,7 +31,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     MatButtonModule,
     MatDatepickerModule,
     MatSelectModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    RouterModule
   ],
   styleUrl: './employee-form.component.css',
   templateUrl: './employee-form.component.html',
@@ -40,15 +42,20 @@ export class EmployeeFormComponent implements OnChanges {
   employeeForm!: FormGroup;
 
   employee: any;
+  currentEmployeeId!: string;
   roles = ['Employee', 'Leader', 'Director'];
 
   constructor(private fb: FormBuilder,
     private employeeService: EmployeeService,
     private router: Router,
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
+    
   ) {
 
     const nav = this.router.getCurrentNavigation();
     this.employee = nav?.extras?.state?.['employee'];
+    this.currentEmployeeId = this.route.snapshot.paramMap.get('id')!;
 
     if (this.employee !== null) {
       this.employeeForm = this.fb.group({
@@ -125,12 +132,19 @@ export class EmployeeFormComponent implements OnChanges {
       else {
         const newEmployee: EmployeeDto = this.employeeForm.value;
         console.log('Submitted:', newEmployee);
-        this.employeeService.add(newEmployee).subscribe({
+        this.employeeService.add(this.currentEmployeeId, newEmployee).subscribe({
           next: () => {
             console.log('Employee created');
             this.router.navigate(['/employees']); // Go back to list
           },
-          error: (err) => console.error('Error saving employee', err),
+          error: (err) => {
+            console.error('Error saving employee', err);
+
+            this.snackBar.open(err.error.errorMessage, 'Close', {
+              duration: 5000,
+              panelClass: 'snackbar-error'
+            });
+          }
         });
       }
 

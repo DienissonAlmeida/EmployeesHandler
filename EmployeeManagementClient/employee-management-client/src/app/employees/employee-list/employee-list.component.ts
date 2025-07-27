@@ -28,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class EmployeeListComponent {
   employees: EmployeeDto[] = [];
   displayedColumns: string[] = ['name', 'email', 'role', 'actions'];
+  currentUserId!: string;
   constructor(
     private employeeService: EmployeeService,
     private router: Router
@@ -35,7 +36,10 @@ export class EmployeeListComponent {
 
   ngOnInit(): void {
     this.employeeService.getAll().subscribe({
-      next: (data) => (this.employees = data),
+      next: (data) => (
+        this.employees = data,
+        this.currentUserId = data[0]?.id // Assuming the first employee is the current user
+      ),
       error: (err) => console.error('Error fetching employees', err),
     });
   }
@@ -45,10 +49,14 @@ export class EmployeeListComponent {
   editEmployee(employee: EmployeeDto) {
     // Open dialog, navigate, or patch form
     console.log('Edit:', employee);
-    this.router.navigate(['/employees', employee.id], { state: { employee } });
+    this.router.navigate(['/employees/edit', employee.id], { state: { employee } });
 
   }
 
+
+  goToNewEmployee() {
+  this.router.navigate(['/employees/new', this.currentUserId]);
+}
   deleteEmployee(employee: EmployeeDto) {
     // Confirm and call delete service
     console.log('Delete:', employee);

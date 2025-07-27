@@ -17,16 +17,15 @@ namespace EmployeeManagement.Api.Controllers
             _service = service;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> Create(Guid id, [FromBody] CreateEmployeeCommand request)
         {
-            // Simulando ID do usuário atual (autenticação virá depois)
-            var currentUserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
-
-            var result = await _service.CreateAsync(request, currentUserId);
+            var result = await _service.CreateAsync(request, id);
             //return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            if (result.Success)
+                return Created("id", result);
 
-            return Created("id", result);
+            return BadRequest(result);
         }
 
         [HttpGet("{id}")]

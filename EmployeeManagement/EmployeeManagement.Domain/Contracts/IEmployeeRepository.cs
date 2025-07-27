@@ -13,5 +13,7 @@ namespace EmployeeManagement.Domain.Contracts
         Task SaveChangesAsync();
         Task<bool> ExistsByDocumentAsync(string document);
         Task<bool> ExistsByIdAsync(Guid managerId);
+
+        Task<Role> GetRoleById(Guid id);
     }
 }

@@ -3,6 +3,7 @@ using EmployeeManagement.Application.Contracts;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
+using static EmployeeManagement.Domain.Dtos.CreateEmployeeResponseDto;
 
 namespace EmployeeManagement.Application.Services
 {
@@ -17,14 +18,18 @@ namespace EmployeeManagement.Application.Services
             //_passwordHasher = passwordHasher;
         }
 
-        public async Task<EmployeeDto> CreateAsync(CreateEmployeeCommand command, Guid currentUserId)
+        public async Task<CreateEmployeeResponse> CreateAsync(CreateEmployeeCommand command, Guid currentUserId)
         {
-            //var currentUser = await _repository.GetByIdAsync(currentUserId);
-            //if (currentUser == null) throw new Exception("Usuário atual não encontrado.");
+            var currentUserRole = await _repository.GetRoleById(currentUserId);
 
             var newRole = Enum.Parse<Role>(command.Role);
-            //if (newRole > currentUser.Role)
-            //    throw new Exception("Você não pode criar um funcionário com permissão superior à sua.");
+
+            if (newRole > currentUserRole)
+                return new CreateEmployeeResponse()
+                {
+                    Success = false,
+                    ErrorMessage = "Você não pode criar um funcionário com permissão superior à sua."
+                };
 
             var entity = new Employee
             {
@@ -42,7 +47,13 @@ namespace EmployeeManagement.Application.Services
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
 
-            return MapToDto(entity);
+            var dto = MapToDto(entity);
+
+            return new CreateEmployeeResponse()
+            {
+                Success = true,
+                Employee = dto
+            };
         }
 
         public async Task<List<EmployeeDto>> GetAllAsync()

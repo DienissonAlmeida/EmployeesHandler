@@ -28,8 +28,8 @@ export class EmployeeService {
   getAll(): Observable<EmployeeDto[]> {
     return this.http.get<EmployeeDto[]>(this.apiUrl);
   }
-  add(employee: EmployeeDto) {
-    return this.http.post(this.apiUrl, employee);
+  add(id: string, employee: EmployeeDto) {
+    return this.http.post(`${this.apiUrl}/${id}`, employee);
   }
   update(employee: EmployeeDto) {
     return this.http.put(`${this.apiUrl}/${employee.id}`, employee);
