@@ -9,7 +9,7 @@ namespace EmployeeManagement.Domain.Contracts
         Task<Employee?> GetByIdAsync(Guid id);
         Task<List<EmployeeDto>> GetAllAsync();
         Task UpdateAsync(Employee employee);
-        Task DeleteAsync(Guid id);
+        Task<int> DeleteAsync(Guid id);
         Task SaveChangesAsync();
     }
 }

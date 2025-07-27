@@ -53,11 +53,11 @@ namespace EmployeeManagement.Api.Controllers
         //    return NoContent();
         //}
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(Guid id)
-        //{
-        //    await _service.DeleteAsync(id);
-        //    return NoContent();
-        //}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _service.DeleteAsync(id);
+            return NoContent();
+        }
     }
 }

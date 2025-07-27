@@ -3,3 +3,14 @@
   margin: 2rem auto; /* centers horizontally and adds top/bottom space */
   padding: 0 1rem;   /* some horizontal padding */
 }
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

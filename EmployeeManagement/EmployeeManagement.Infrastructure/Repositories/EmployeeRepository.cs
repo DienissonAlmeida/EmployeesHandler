@@ -57,14 +57,16 @@ namespace EmployeeManagement.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id)
         {
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee != null)
-            {
-                _context.Employees.Remove(employee);
-                await _context.SaveChangesAsync();
-            }
+            //var employee = await _context.Employees.FindAsync(id);
+            //if (employee != null)
+            //{
+            //    _context.Employees.Remove(employee);
+            //    await _context.SaveChangesAsync();
+            //}
+
+            return await _context.Employees.Where(x => x.Id == id).ExecuteDeleteAsync();
         }
 
         public async Task SaveChangesAsync()

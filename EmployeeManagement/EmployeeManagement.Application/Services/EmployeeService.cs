@@ -50,6 +50,11 @@ namespace EmployeeManagement.Application.Services
             return await _repository.GetAllAsync();
         }
 
+        public async Task DeleteAsync(Guid id)
+        {
+            await _repository.DeleteAsync(id);
+        }
+
         private EmployeeDto MapToDto(Employee e) => new()
         {
             Id = e.Id,
