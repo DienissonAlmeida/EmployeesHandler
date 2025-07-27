@@ -17,25 +17,25 @@ namespace EmployeeManagement.Application.Services
             //_passwordHasher = passwordHasher;
         }
 
-        public async Task<EmployeeDto> CreateAsync(CreateEmployeeCommand request, Guid currentUserId)
+        public async Task<EmployeeDto> CreateAsync(CreateEmployeeCommand command, Guid currentUserId)
         {
             //var currentUser = await _repository.GetByIdAsync(currentUserId);
             //if (currentUser == null) throw new Exception("Usuário atual não encontrado.");
 
-            var newRole = Enum.Parse<Role>(request.Role);
+            var newRole = Enum.Parse<Role>(command.Role);
             //if (newRole > currentUser.Role)
             //    throw new Exception("Você não pode criar um funcionário com permissão superior à sua.");
 
             var entity = new Employee
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                DocumentNumber = request.DocumentNumber,
-                PhoneNumbers = request.PhoneNumbers,
-                ManagerId = request.ManagerId,
-                PasswordHash = request.Password,
-                BirthDate = request.BirthDate,
+                FirstName = command.FirstName,
+                LastName = command.LastName,
+                Email = command.Email,
+                DocumentNumber = command.DocumentNumber,
+                PhoneNumbers = command.PhoneNumbers,
+                ManagerId = command.ManagerId,
+                PasswordHash = command.Password,
+                BirthDate = command.BirthDate,
                 Role = newRole
             };
 

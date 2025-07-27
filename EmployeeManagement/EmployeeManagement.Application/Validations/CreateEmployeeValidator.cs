@@ -1,28 +1,65 @@
 ﻿using EmployeeManagement.Application.Commands;
+using EmployeeManagement.Domain.Contracts;
 using FluentValidation;
 
 namespace EmployeeManagement.Application.Validations
 {
     public class CreateEmployeeValidator : AbstractValidator<CreateEmployeeCommand>
     {
-        public CreateEmployeeValidator()
+        private readonly IEmployeeRepository _repository;
+
+        public CreateEmployeeValidator(IEmployeeRepository repository)
         {
-            RuleFor(x => x.FirstName).NotEmpty();
-            RuleFor(x => x.LastName).NotEmpty();
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
-            RuleFor(x => x.DocumentNumber).NotEmpty();
-            RuleFor(x => x.Password).NotEmpty().MinimumLength(6);
+            _repository = repository;
+
+            RuleFor(x => x.FirstName)
+                .NotEmpty().WithMessage("First name is required.");
+
+            RuleFor(x => x.LastName)
+                .NotEmpty().WithMessage("Last name is required.");
+
+            RuleFor(x => x.Email)
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("A valid email is required.");
+
+            RuleFor(x => x.DocumentNumber)
+                .NotEmpty().WithMessage("Document number is required.")
+                .MustAsync(ExistsByDocumentNumber).WithMessage("Document number must be unique.");
+
+            RuleForEach(x => x.PhoneNumbers)
+                .NotEmpty().WithMessage("Phone number cannot be empty.");
+
+            RuleFor(x => x.Password)
+                .NotEmpty().WithMessage("Password is required.")
+                .MinimumLength(6).WithMessage("Password must be at least 6 characters.");
+
+            // Optional field: ManagerId can be null or must exist
+            When(x => x.ManagerId.HasValue, () =>
+            {
+                RuleFor(x => x.ManagerId.Value)
+                    .MustAsync(ExistsManagerId).WithMessage("Manager must be a valid employee.");
+            });
+
             RuleFor(x => x.BirthDate)
-                .Must(BeAnAdult).WithMessage("Funcionário deve ter no minimo 18 anos");
+                .NotEmpty().WithMessage("Birth date is required.")
+                .Must(BeAtLeast18).WithMessage("Employee must be at least 18 years old.");
         }
 
-        private bool BeAnAdult(DateTime birthDate)
+        private bool BeAtLeast18(DateTime birthDate)
         {
-            var today = DateTime.Today;
-            var age = today.Year - birthDate.Year;
-            if (birthDate > today.AddYears(-age)) age--;
+            var age = DateTime.Today.Year - birthDate.Year;
+            if (birthDate > DateTime.Today.AddYears(-age)) age--;
             return age >= 18;
         }
+        private async Task<bool> ExistsByDocumentNumber(string document, CancellationToken cancellationToken)
+        {
+            return !await _repository.ExistsByDocumentAsync(document);
+        }
 
+        private async Task<bool> ExistsManagerId(Guid managerId, CancellationToken cancellationToken)
+        {
+            return await _repository.ExistsByIdAsync(managerId);
+        }
     }
+
 }

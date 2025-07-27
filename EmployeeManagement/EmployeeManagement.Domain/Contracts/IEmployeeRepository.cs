@@ -11,5 +11,7 @@ namespace EmployeeManagement.Domain.Contracts
         void UpdateAsync(Employee employee);
         Task<int> DeleteAsync(Guid id);
         Task SaveChangesAsync();
+        Task<bool> ExistsByDocumentAsync(string document);
+        Task<bool> ExistsByIdAsync(Guid managerId);
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection.Metadata;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
@@ -72,6 +68,17 @@ namespace EmployeeManagement.Infrastructure.Repositories
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsByDocumentAsync(string document)
+        {
+            return await _context.Employees.AnyAsync(x => x.DocumentNumber == document);
+
+        }
+
+        public async Task<bool> ExistsByIdAsync(Guid managerId)
+        {
+            return await _context.Employees.AnyAsync(x => x.Id == managerId);
         }
     }
 }
