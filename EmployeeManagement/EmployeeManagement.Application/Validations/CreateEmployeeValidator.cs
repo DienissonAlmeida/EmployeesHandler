@@ -33,7 +33,6 @@ namespace EmployeeManagement.Application.Validations
                 .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(6).WithMessage("Password must be at least 6 characters.");
 
-            // Optional field: ManagerId can be null or must exist
             When(x => x.ManagerId.HasValue, () =>
             {
                 RuleFor(x => x.ManagerId.Value)
