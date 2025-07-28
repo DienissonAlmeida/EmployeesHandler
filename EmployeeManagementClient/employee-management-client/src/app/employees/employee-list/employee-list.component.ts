@@ -8,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -31,14 +32,15 @@ export class EmployeeListComponent {
   currentUserId!: string;
   constructor(
     private employeeService: EmployeeService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
     this.employeeService.getAll().subscribe({
       next: (data) => (
         this.employees = data,
-        this.currentUserId = data[0]?.id // Assuming the first employee is the current user
+        this.currentUserId = this.authService.getUserId()!// Assuming the first employee is the current user
       ),
       error: (err) => console.error('Error fetching employees', err),
     });

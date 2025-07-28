@@ -11,5 +11,6 @@ namespace EmployeeManagement.Application.Contracts
         Task<List<EmployeeDto>> GetAllAsync();
         Task DeleteAsync(Guid id);
         Task UpdateAsync(Guid id, CreateEmployeeCommand request);
+        Task<EmployeeDto> GetByEmailAsync(string requestEmail);
     }
 }

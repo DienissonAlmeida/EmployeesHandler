@@ -50,6 +50,7 @@ export class EmployeeFormComponent implements OnChanges {
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
+
     
   ) {
 
@@ -77,7 +78,6 @@ export class EmployeeFormComponent implements OnChanges {
           phoneArray.push(this.fb.control(phone, Validators.required));
         });
       } else {
-        // Add one empty field by default if no numbers
         phoneArray.push(this.fb.control('', Validators.required));
       }
     }

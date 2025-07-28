@@ -11,6 +11,7 @@ namespace EmployeeManagement.Application.Extensions
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidator>();
 
             return services;

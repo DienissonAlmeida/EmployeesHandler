@@ -77,6 +77,11 @@ namespace EmployeeManagement.Application.Services
             await _repository.SaveChangesAsync();
         }
 
+        public Task<EmployeeDto> GetByEmailAsync(string requestEmail)
+        {
+            return _repository.GetByEmail(requestEmail);
+        }
+
         private EmployeeDto MapToDto(Employee e) => new()
         {
             Id = e.Id,

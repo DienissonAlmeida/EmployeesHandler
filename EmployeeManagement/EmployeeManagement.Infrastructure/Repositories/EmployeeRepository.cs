@@ -55,13 +55,6 @@ namespace EmployeeManagement.Infrastructure.Repositories
 
         public async Task<int> DeleteAsync(Guid id)
         {
-            //var employee = await _context.Employees.FindAsync(id);
-            //if (employee != null)
-            //{
-            //    _context.Employees.Remove(employee);
-            //    await _context.SaveChangesAsync();
-            //}
-
             return await _context.Employees.Where(x => x.Id == id).ExecuteDeleteAsync();
         }
 
@@ -88,6 +81,25 @@ namespace EmployeeManagement.Infrastructure.Repositories
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<EmployeeDto> GetByEmail(string requestEmail)
+        {
+            return await _context.Employees
+                .Where(x => x.Email == requestEmail)
+                .Select(x => new EmployeeDto()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    BirthDate = x.BirthDate,
+                    DocumentNumber = x.DocumentNumber,
+                    Email = x.Email,
+                    PhoneNumbers = x.PhoneNumbers,
+                    Role = x.Role.ToString(),
+                    ManagerId = x.ManagerId,
+                    Password = x.PasswordHash
+                })
+                .SingleAsync();
+        }
     }
 
 

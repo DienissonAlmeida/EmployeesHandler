@@ -15,5 +15,6 @@ namespace EmployeeManagement.Domain.Contracts
         Task<bool> ExistsByIdAsync(Guid managerId);
 
         Task<Role> GetRoleById(Guid id);
+        Task<EmployeeDto> GetByEmail(string requestEmail);
     }
 }
