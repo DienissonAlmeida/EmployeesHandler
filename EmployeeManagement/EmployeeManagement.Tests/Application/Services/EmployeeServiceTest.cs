@@ -7,7 +7,7 @@ using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
 using FluentAssertions;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EmployeeManagement.Tests.Application.Services
@@ -17,19 +17,16 @@ namespace EmployeeManagement.Tests.Application.Services
         private readonly Mock<IEmployeeRepository> _repositoryMock = new();
         private readonly Mock<IPasswordHasherService> _passwordHasherServiceMock = new();
         private readonly EmployeeService _service;
-
+        private readonly Mock<ILogger<EmployeeService>> _loggerMock = new();
         public EmployeeServiceTest()
         {
-            _service = new EmployeeService(_repositoryMock.Object, new CreateEmployeeValidator(_repositoryMock.Object), _passwordHasherServiceMock.Object);
+            _service = new EmployeeService(_repositoryMock.Object, new CreateEmployeeValidator(_repositoryMock.Object),
+                _passwordHasherServiceMock.Object, _loggerMock.Object);
         }
 
         [Fact]
         public async Task Should_createAsync_successfull()
         {
-
-            var hash = new PasswordHasherService();
-            var haspass = hash.HashPassword("admin123");
-
             //arrange
             var request = new CreateEmployeeCommand
             {
@@ -145,6 +142,67 @@ namespace EmployeeManagement.Tests.Application.Services
                    e.Email == updateCommand.Email &&
                    e.DocumentNumber == updateCommand.DocumentNumber &&
                    e.PhoneNumbers.SequenceEqual(updateCommand.PhoneNumbers);
+        }
+
+        [Fact]
+        public async Task GetAllToLinkAsync_ShouldReturnListOfEmployeeDto()
+        {
+            var employees = new List<EmployeeDto>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = "Jane",
+                    LastName = "Smith",
+                    Email = "jane@company.com",
+                    DocumentNumber = "987654321",
+                    PhoneNumbers = new List<string> { "123456789" },
+                    BirthDate = DateTime.Now.AddYears(-30),
+                    Role = "Employee"
+                }
+            };
+
+            _repositoryMock.Setup(r => r.GetAllRoleAboveAndItself(It.IsAny<Role>(), It.IsAny<Guid>())).ReturnsAsync(employees);
+
+            var result = await _service.GetAllToLinkAsync(Guid.NewGuid());
+
+            result.Should().BeEquivalentTo(employees);
+            _repositoryMock.Verify(r => r.GetAllRoleAboveAndItself(It.IsAny<Role>(), It.IsAny<Guid>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetByEmailAsync_ShouldReturnEmployee_WhenFound()
+        {
+            var employee = new EmployeeDto
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Jane",
+                LastName = "Smith",
+                Email = "jane@company.com",
+                DocumentNumber = "987654321",
+                PhoneNumbers = new List<string> { "123456789" },
+                BirthDate = DateTime.Now.AddYears(-30),
+                Role = "Employee"
+            };
+
+            _repositoryMock.Setup(r => r.GetByEmail(employee.Email)).ReturnsAsync(employee);
+
+            var result = await _service.GetByEmailAsync(employee.Email);
+
+            result.Should().BeEquivalentTo(employee);
+            _repositoryMock.Verify(r => r.GetByEmail(employee.Email), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetByEmailAsync_ShouldReturnNull_WhenNotFound()
+        {
+            var email = "notfound@company.com";
+            _repositoryMock.Setup(r => r.GetByEmail(email)).ReturnsAsync((EmployeeDto)null);
+
+            var result = await _service.GetByEmailAsync(email);
+
+            result.Should().BeNull();
+            _repositoryMock.Verify(r => r.GetByEmail(email), Times.Once);
         }
     }
 }

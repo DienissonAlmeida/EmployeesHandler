@@ -4,7 +4,7 @@ using EmployeeManagement.Application.Validations;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using static EmployeeManagement.Domain.Dtos.CreateEmployeeResponseDto;
 
 namespace EmployeeManagement.Application.Services
@@ -14,35 +14,52 @@ namespace EmployeeManagement.Application.Services
         private readonly IEmployeeRepository _repository;
         private readonly CreateEmployeeValidator _validator;
         private readonly IPasswordHasherService _passwordHasherService;
+        private readonly ILogger<EmployeeService> _logger;
 
-        public EmployeeService(IEmployeeRepository repository, CreateEmployeeValidator validator, IPasswordHasherService passwordHasherService)
+        public EmployeeService(IEmployeeRepository repository,
+            CreateEmployeeValidator validator,
+            IPasswordHasherService passwordHasherService,
+            ILogger<EmployeeService> logger)
         {
             _repository = repository;
             _validator = validator;
             _passwordHasherService = passwordHasherService;
+            _logger = logger;
         }
 
         public async Task<CreateEmployeeResponse> CreateAsync(CreateEmployeeCommand command, Guid currentUserId)
         {
+            _logger.LogInformation("Starting process of employee creation");
+
             var validationResult = await _validator.ValidateAsync(command);
 
             if (!validationResult.IsValid)
+            {
+                var errors = string.Join(";", validationResult.Errors.Select(x => x.ErrorMessage));
+                _logger.LogError($"Errors in validation: {errors}");
+
                 return new CreateEmployeeResponse()
                 {
                     Success = false,
-                    ErrorMessage = string.Join(";", validationResult.Errors.Select(x => x.ErrorMessage))
+                    ErrorMessage = errors
                 };
+            }
 
             var currentUserRole = await _repository.GetRoleById(currentUserId);
 
             var newRole = Enum.Parse<Role>(command.Role);
 
             if (newRole > currentUserRole)
+            {
+                var error = "You cannot create an employee with a higher permission than yours.";
+                _logger.LogError("Error in validation: {0}", error);
+
                 return new CreateEmployeeResponse()
                 {
                     Success = false,
-                    ErrorMessage = "Você não pode criar um funcionário com permissão superior à sua."
+                    ErrorMessage = error
                 };
+            }
 
             var entity = new Employee
             {
@@ -52,7 +69,7 @@ namespace EmployeeManagement.Application.Services
                 DocumentNumber = command.DocumentNumber,
                 PhoneNumbers = command.PhoneNumbers,
                 ManagerId = command.ManagerId,
-                PasswordHash = _passwordHasherService.HashPassword(command.Password),
+                PasswordHash = _passwordHasherService.HashPassword(command.Password!),
                 BirthDate = command.BirthDate,
                 Role = newRole
             };
@@ -61,6 +78,8 @@ namespace EmployeeManagement.Application.Services
             await _repository.SaveChangesAsync();
 
             var dto = MapToDto(entity);
+
+            _logger.LogInformation($"Employee registered successfully: {dto.FirstName}");
 
             return new CreateEmployeeResponse()
             {
@@ -71,28 +90,35 @@ namespace EmployeeManagement.Application.Services
 
         public async Task<List<EmployeeDto>> GetAllAsync(Guid id)
         {
+            _logger.LogInformation("Getting all employees for employeeId {EmployeeId}", id);
             var currentEmployeeRole = await _repository.GetRoleById(id);
-
-            return await _repository.GetAllRoleBellowAndItself(currentEmployeeRole, id);
+            var result = await _repository.GetAllRoleBellowAndItself(currentEmployeeRole, id);
+            _logger.LogInformation("Retrieved {Count} employees for employeeId {EmployeeId}", result.Count, id);
+            return result;
         }
         public async Task<List<EmployeeDto>> GetAllToLinkAsync(Guid id)
         {
+            _logger.LogInformation("Getting all employees to link for employeeId {EmployeeId}", id);
             var currentEmployeeRole = await _repository.GetRoleById(id);
-
-            return await _repository.GetAllRoleAboveAndItself(currentEmployeeRole, id);
+            var result = await _repository.GetAllRoleAboveAndItself(currentEmployeeRole, id);
+            _logger.LogInformation("Retrieved {Count} employees to link for employeeId {EmployeeId}", result.Count, id);
+            return result;
         }
 
         public async Task DeleteAsync(Guid id)
         {
+            _logger.LogInformation("Deleting employee with id {EmployeeId}", id);
             await _repository.DeleteAsync(id);
+            _logger.LogInformation("Deleted employee with id {EmployeeId}", id);
         }
 
         public async Task UpdateAsync(Guid id, CreateEmployeeCommand request)
         {
+            _logger.LogInformation("Updating employee with id {EmployeeId}", id);
             var employeeToUpdate = await _repository.GetByIdAsync(id);
 
-            var hashedPassword = request.Password is not null ?
-                _passwordHasherService.HashPassword(request.Password!)
+            var hashedPassword = request.Password is not null
+                ? _passwordHasherService.HashPassword(request.Password!)
                 : employeeToUpdate!.PasswordHash;
 
             employeeToUpdate!.UpdateProperties(request, hashedPassword);
@@ -100,12 +126,18 @@ namespace EmployeeManagement.Application.Services
             _repository.UpdateAsync(employeeToUpdate);
 
             await _repository.SaveChangesAsync();
+            _logger.LogInformation("Updated employee with id {EmployeeId}", id);
         }
 
-
-        public Task<EmployeeDto> GetByEmailAsync(string requestEmail)
+        public async Task<EmployeeDto> GetByEmailAsync(string requestEmail)
         {
-            return _repository.GetByEmail(requestEmail);
+            _logger.LogInformation("Getting employee by email {Email}", requestEmail);
+            var employee = await _repository.GetByEmail(requestEmail);
+            if (employee != null)
+                _logger.LogInformation("Found employee with email {Email}", requestEmail);
+            else
+                _logger.LogWarning("No employee found with email {Email}", requestEmail);
+            return employee!;
         }
 
         private EmployeeDto MapToDto(Employee e) => new()
