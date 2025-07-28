@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagement.Infrastructure.Repositories
 {
-    internal class EmployeeRepository : IEmployeeRepository
+    public class EmployeeRepository : IEmployeeRepository
     {
         private readonly EmployeeDbContext _context;
 

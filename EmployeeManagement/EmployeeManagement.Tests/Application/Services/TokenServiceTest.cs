@@ -27,6 +27,7 @@ namespace EmployeeManagement.Tests.Application.Services
         [Fact]
         public void GenerateToken_ShouldReturnValidJwtToken()
         {
+            //arrange
             var employee = new EmployeeDto
             {
                 Id = Guid.NewGuid(),
@@ -36,8 +37,10 @@ namespace EmployeeManagement.Tests.Application.Services
                 Role = "Employee"
             };
 
+            //act
             var token = _tokenService.GenerateToken(employee);
 
+            //assert
             token.Should().NotBeNullOrWhiteSpace();
 
             var handler = new JwtSecurityTokenHandler();
