@@ -16,17 +16,8 @@ namespace EmployeeManagement.Domain.Entities
         public string PasswordHash { get; set; } = null!;
         public DateTime BirthDate { get; set; }
 
-        public Role Role { get; set; } // Enum com os papéis: Funcionário, Líder, Diretor
+        public Role Role { get; set; } 
 
-        public bool IsAdult() => CalculateAge() >= 18;
-
-        private int CalculateAge()
-        {
-            var today = DateTime.Today;
-            var age = today.Year - BirthDate.Year;
-            if (BirthDate.Date > today.AddYears(-age)) age--;
-            return age;
-        }
 
         public void UpdateProperties(CreateEmployeeCommand request)
         {

@@ -1,7 +1,9 @@
 using System.Text;
 using EmployeeManagement.Application.Extensions;
+using EmployeeManagement.Infrastructure.Data;
 using EmployeeManagement.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -68,4 +70,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<EmployeeDbContext>();
+    db.Database.Migrate();
+}
 app.Run();
