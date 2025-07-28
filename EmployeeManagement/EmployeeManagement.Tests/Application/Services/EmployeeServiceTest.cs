@@ -1,5 +1,6 @@
 ﻿using EmployeeManagement.Application.Commands;
 using EmployeeManagement.Application.Services;
+using EmployeeManagement.Application.Validations;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
@@ -15,7 +16,7 @@ namespace EmployeeManagement.Tests.Application.Services
 
         public EmployeeServiceTest()
         {
-            _service = new EmployeeService(_repositoryMock.Object);
+            _service = new EmployeeService(_repositoryMock.Object, new CreateEmployeeValidator(_repositoryMock.Object));
         }
 
         [Fact]
@@ -29,16 +30,19 @@ namespace EmployeeManagement.Tests.Application.Services
                 Email = "teste@teste",
                 DocumentNumber = "123456789",
                 Password = "password",
-                BirthDate = DateTime.Now,
+                BirthDate = DateTime.Now.AddYears(-20),
                 PhoneNumbers = new List<string>() { "454564564" },
                 Role = "Employee"
             };
 
+            var currentId = Guid.NewGuid();
+            _repositoryMock.Setup(x => x.GetRoleById(currentId)).ReturnsAsync(Role.Employee);
+
             // Act
-            var result = await _service.CreateAsync(request, Guid.NewGuid());
+            var result = await _service.CreateAsync(request, currentId);
 
             // Assert
-            result.Should().BeEquivalentTo(request, opt => opt.Excluding(y => y.Password));
+            result.Employee.Should().BeEquivalentTo(request, opt => opt.Excluding(y => y.Password));
 
             _repositoryMock.Verify(x => x.AddAsync(It.IsAny<Employee>()), Times.Once);
             _repositoryMock.Verify(x => x.SaveChangesAsync(), Times.Once);
@@ -63,14 +67,14 @@ namespace EmployeeManagement.Tests.Application.Services
                 }
             };
 
-            _repositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(employees);
+            _repositoryMock.Setup(r => r.GetAllRoleBellowAndItself(It.IsAny<Role>(), It.IsAny<Guid>())).ReturnsAsync(employees);
 
             //act
-            var result = await _service.GetAllAsync();
+            var result = await _service.GetAllAsync(Guid.NewGuid());
 
             //assert
             result.Should().BeEquivalentTo(employees);
-            _repositoryMock.Verify(r => r.GetAllAsync(), Times.Once);
+            _repositoryMock.Verify(r => r.GetAllRoleBellowAndItself(It.IsAny<Role>(), It.IsAny<Guid>()), Times.Once);
         }
 
         [Fact]

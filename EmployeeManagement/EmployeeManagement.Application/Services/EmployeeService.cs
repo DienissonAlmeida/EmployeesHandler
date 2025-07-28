@@ -1,5 +1,6 @@
 ﻿using EmployeeManagement.Application.Commands;
 using EmployeeManagement.Application.Contracts;
+using EmployeeManagement.Application.Validations;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
@@ -10,16 +11,27 @@ namespace EmployeeManagement.Application.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepository _repository;
+        private readonly CreateEmployeeValidator _validator;
         //private readonly IPasswordHasher _passwordHasher;
 
-        public EmployeeService(IEmployeeRepository repository)
+        public EmployeeService(IEmployeeRepository repository, CreateEmployeeValidator validator)
         {
             _repository = repository;
+            _validator = validator;
             //_passwordHasher = passwordHasher;
         }
 
         public async Task<CreateEmployeeResponse> CreateAsync(CreateEmployeeCommand command, Guid currentUserId)
         {
+            var validationResult = await _validator.ValidateAsync(command);
+
+            if (!validationResult.IsValid)
+                return new CreateEmployeeResponse()
+                {
+                    Success = false,
+                    ErrorMessage = string.Join(";", validationResult.Errors.Select(x => x.ErrorMessage))
+                };
+
             var currentUserRole = await _repository.GetRoleById(currentUserId);
 
             var newRole = Enum.Parse<Role>(command.Role);
@@ -56,9 +68,17 @@ namespace EmployeeManagement.Application.Services
             };
         }
 
-        public async Task<List<EmployeeDto>> GetAllAsync()
+        public async Task<List<EmployeeDto>> GetAllAsync(Guid id)
         {
-            return await _repository.GetAllAsync();
+            var currentEmployeeRole = await _repository.GetRoleById(id);
+
+            return await _repository.GetAllRoleBellowAndItself(currentEmployeeRole, id);
+        }
+        public async Task<List<EmployeeDto>> GetAllToLinkAsync(Guid id)
+        {
+            var currentEmployeeRole = await _repository.GetRoleById(id);
+
+            return await _repository.GetAllRoleAboveAndItself(currentEmployeeRole, id);
         }
 
         public async Task DeleteAsync(Guid id)
@@ -96,7 +116,7 @@ namespace EmployeeManagement.Application.Services
         };
 
 
-        // Implement GetByIdAsync, GetAllAsync, UpdateAsync, DeleteAsync simlarly
+        // Implement GetByIdAsync, GetAllRoleBellowAndItself, UpdateAsync, DeleteAsync simlarly
     }
 
 }

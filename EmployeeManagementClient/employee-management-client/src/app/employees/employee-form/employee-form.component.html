@@ -38,8 +38,12 @@
                 </div>
 
                 <mat-form-field class="full-width">
-                    <mat-label>Manager ID</mat-label>
-                    <input matInput formControlName="managerId" />
+                    <mat-label>Manager</mat-label>
+                    <mat-select formControlName="managerId">
+                        <mat-option *ngFor="let employee of employeesToLink" [value]="employee.id">
+                            {{ employee.firstName }} {{ employee.lastName }}
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
 
                 <mat-form-field class="full-width">

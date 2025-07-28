@@ -29,9 +29,12 @@ namespace EmployeeManagement.Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<List<EmployeeDto>> GetAllAsync()
+        public async Task<List<EmployeeDto>> GetAllRoleBellowAndItself(Role role, Guid currentUserId)
         {
-            return await _context.Employees
+            return await _context.Employees.Where(e =>
+                        e.Role < role || // above role
+                        e.Id == currentUserId
+                )
                 .Select(x => new EmployeeDto()
                 {
                     Id = x.Id,
@@ -44,6 +47,19 @@ namespace EmployeeManagement.Infrastructure.Repositories
                     Role = x.Role.ToString(),
                     ManagerId = x.ManagerId,
                     Password = x.PasswordHash
+                })
+                .ToListAsync();
+        }
+        public async Task<List<EmployeeDto>> GetAllRoleAboveAndItself(Role role, Guid currentUserId)
+        {
+            return await _context.Employees.Where(e =>
+                    e.Role > role || e.Id == currentUserId
+                )
+                .Select(x => new EmployeeDto()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
                 })
                 .ToListAsync();
         }

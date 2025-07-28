@@ -1,9 +1,15 @@
 <mat-toolbar color="primary" class="toolbar">
     <span>Employees</span>
     <span class="spacer"></span>
+     <span style="font-size: 18px;">Welcome, {{ this.currentEmployeeName}}</span>
+      <span class="spacer"></span>
     <!-- <button mat-raised-button color="accent"> -->
     <button mat-raised-button color="accent" (click)="goToNewEmployee()">
         + New Employee
+    </button>
+    <button mat-raised-button color="accent"  (click)="logout()">
+         <mat-icon>logout</mat-icon>
+        Sign out
     </button>
 </mat-toolbar>
 <div class="table-container">

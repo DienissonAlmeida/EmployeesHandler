@@ -33,14 +33,37 @@ export class AuthService {
     return localStorage.getItem('jwt_token');
   }
 
-    getUserId(): string | null {
-    const token = this.getToken();
-    if (!token) return null;
+  //   getUserId(): string | null {
+  //   const token = this.getToken();
+  //   if (!token) return null;
 
-    const payload = token.split('.')[1]; // Parte do meio do JWT
-    const decodedPayload = atob(payload); // Decodifica base64
-    const parsed = JSON.parse(decodedPayload);
+  //   const payload = token.split('.')[1]; // Parte do meio do JWT
+  //   const decodedPayload = atob(payload); // Decodifica base64
+  //   const parsed = JSON.parse(decodedPayload);
 
-    return parsed['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || parsed['nameid'] || parsed['sub'] || null;
-  }
+  //   return parsed['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || parsed['nameid'] || parsed['sub'] || null;
+  // }
+
+  getUserInfo(): { userId: string | null; name: string | null } {
+  const token = this.getToken();
+  if (!token) return { userId: null, name: null };
+
+  const payload = token.split('.')[1]; // JWT payload
+  const decodedPayload = atob(payload);
+  const parsed = JSON.parse(decodedPayload);
+
+  const userId =
+    parsed['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
+    parsed['nameid'] ||
+    parsed['sub'] ||
+    null;
+
+  const name =
+    parsed['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||
+    parsed['unique_name'] ||
+    parsed['name'] ||
+    null;
+
+  return { userId, name };
+}
 }

@@ -12,13 +12,7 @@ import { EmployeeDto, EmployeeService } from '../../core/employee.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-
-// @Component({
-//   selector: 'app-employee-form',
-//   imports: [],
-//   templateUrl: './employee-form.component.html',
-//   styleUrl: './employee-form.component.css'
-// })
+import { EmployeeDataService } from '../common/employee.data.service';
 
 @Component({
   selector: 'app-employee-form',
@@ -42,22 +36,33 @@ export class EmployeeFormComponent implements OnChanges {
   employeeForm!: FormGroup;
 
   employee: any;
+  allEmployees: EmployeeDto[] = [];
+  employeesToLink: EmployeeDto[] = [];
   currentEmployeeId!: string;
-  roles = ['Employee', 'Leader', 'Director'];
+  allRoles = ['Employee', 'Leader', 'Director'];
+  roles: string[] = [];
+  roleHierarchy = {
+    Director: 3,
+    Leader: 2,
+    Employee: 1
+  };
+
+
 
   constructor(private fb: FormBuilder,
     private employeeService: EmployeeService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
+    private employeeDataService: EmployeeDataService,
 
-    
   ) {
 
     const nav = this.router.getCurrentNavigation();
     this.employee = nav?.extras?.state?.['employee'];
     this.currentEmployeeId = this.route.snapshot.paramMap.get('id')!;
-
+    this.allEmployees = this.employeeDataService.employees;
+    this.roles = this.getAvailableRoles();
     if (this.employee !== null) {
       this.employeeForm = this.fb.group({
         firstName: [this.employee?.firstName, Validators.required],
@@ -96,7 +101,14 @@ export class EmployeeFormComponent implements OnChanges {
         role: ['', Validators.required]
       });
     }
-
+  }
+    ngOnInit(): void {
+    this.employeeService.getAllToLink(this.currentEmployeeId).subscribe({
+      next: (data) => (
+            this.employeesToLink = data
+      ),
+      error: (err) => console.error('Error fetching employees', err),
+    });
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['employee'] && this.employee) {
@@ -108,6 +120,12 @@ export class EmployeeFormComponent implements OnChanges {
     return this.employeeForm.get('phoneNumbers') as FormArray;
   }
 
+  getAvailableRoles(): string[] {
+    const employeeLoggedIn = this.allEmployees.find(x => x.id === this.currentEmployeeId);
+    const currentLevel = this.roleHierarchy[employeeLoggedIn?.role as keyof typeof this.roleHierarchy];
+    const roles = this.allRoles.filter(role => this.roleHierarchy[role as keyof typeof this.roleHierarchy] <= currentLevel);
+    return roles;
+  }
   addPhoneNumber() {
     this.phoneNumbers.push(this.fb.control('', Validators.required));
   }
@@ -126,7 +144,14 @@ export class EmployeeFormComponent implements OnChanges {
             console.log('Employee created');
             this.router.navigate(['/employees']); // Go back to list
           },
-          error: (err) => console.error('Error saving employee', err),
+          error: (err) => {
+            console.error('Error saving employee', err);
+
+            this.snackBar.open(err.error.errorMessage, 'Close', {
+              duration: 5000,
+              panelClass: 'snackbar-error'
+            });
+          }
         });
       }
       else {

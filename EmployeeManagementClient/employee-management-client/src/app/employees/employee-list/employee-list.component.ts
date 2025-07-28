@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/auth.service';
+import { EmployeeDataService } from '../common/employee.data.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -29,18 +30,24 @@ import { AuthService } from '../../core/auth.service';
 export class EmployeeListComponent {
   employees: EmployeeDto[] = [];
   displayedColumns: string[] = ['name', 'email', 'role', 'actions'];
-  currentUserId!: string;
+  currentEmployeeId!: string;
+  currentEmployeeName!: string;
   constructor(
     private employeeService: EmployeeService,
     private router: Router,
     private authService: AuthService,
+    private employeeDataService: EmployeeDataService
   ) { }
 
   ngOnInit(): void {
-    this.employeeService.getAll().subscribe({
+    const userInfo = this.authService.getUserInfo()!;
+
+     this.currentEmployeeId = userInfo.userId!;
+     this.currentEmployeeName = userInfo.name!;
+
+    this.employeeService.getAll(this.currentEmployeeId).subscribe({
       next: (data) => (
-        this.employees = data,
-        this.currentUserId = this.authService.getUserId()!// Assuming the first employee is the current user
+        this.employees = data
       ),
       error: (err) => console.error('Error fetching employees', err),
     });
@@ -49,23 +56,24 @@ export class EmployeeListComponent {
   dataSource = new MatTableDataSource<EmployeeDto>([]);
 
   editEmployee(employee: EmployeeDto) {
-    // Open dialog, navigate, or patch form
-    console.log('Edit:', employee);
+    this.employeeDataService.employees = this.employees;
     this.router.navigate(['/employees/edit', employee.id], { state: { employee } });
-
   }
 
-
   goToNewEmployee() {
-  this.router.navigate(['/employees/new', this.currentUserId]);
-}
+    this.employeeDataService.employees = this.employees;
+    this.router.navigate(['/employees/new', this.currentEmployeeId]);
+  }
+
+  logout() {
+  this.authService.logout(); 
+  this.router.navigate(['/login']);
+  }
   deleteEmployee(employee: EmployeeDto) {
-    // Confirm and call delete service
     console.log('Delete:', employee);
     if (confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`)) {
       this.employeeService.delete(employee.id).subscribe({
         next: () => {
-          // Remove o funcionário da lista local
           this.employees = this.employees.filter(e => e.id !== employee.id);
         },
         error: (err) => {

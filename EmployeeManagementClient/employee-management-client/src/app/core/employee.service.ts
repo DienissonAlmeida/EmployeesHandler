@@ -25,8 +25,11 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<EmployeeDto[]> {
-    return this.http.get<EmployeeDto[]>(this.apiUrl);
+  getAll(id: string): Observable<EmployeeDto[]> {
+    return this.http.get<EmployeeDto[]>(`${this.apiUrl}/${id}`);
+  }
+    getAllToLink(id: string): Observable<EmployeeDto[]> {
+    return this.http.get<EmployeeDto[]>(`${this.apiUrl}/link/${id}`);
   }
   add(id: string, employee: EmployeeDto) {
     return this.http.post(`${this.apiUrl}/${id}`, employee);

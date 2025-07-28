@@ -21,7 +21,6 @@ namespace EmployeeManagement.Api.Controllers
         public async Task<IActionResult> Create(Guid id, [FromBody] CreateEmployeeCommand request)
         {
             var result = await _service.CreateAsync(request, id);
-            //return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
             if (result.Success)
                 return Created("id", result);
 
@@ -29,19 +28,16 @@ namespace EmployeeManagement.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetAll(Guid id)
         {
-            //var result = await _service.GetByIdAsync(id);
-            //if (result == null) return NotFound();
-            //return Ok(result);
-
-            return Ok();
+            var result = await _service.GetAllAsync(id);
+            return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("link/{id}")]
+        public async Task<IActionResult> GetAllEmployesToLink(Guid id)
         {
-            var result = await _service.GetAllAsync();
+            var result = await _service.GetAllToLinkAsync(id);
             return Ok(result);
         }
 
