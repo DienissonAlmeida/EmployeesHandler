@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.Application.Contracts;
+using EmployeeManagement.Application.Security;
 using EmployeeManagement.Application.Services;
 using EmployeeManagement.Application.Validations;
 using FluentValidation;
@@ -13,7 +14,7 @@ namespace EmployeeManagement.Application.Extensions
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidator>();
-
+            services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
             return services;
         }
     }

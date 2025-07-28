@@ -14,7 +14,7 @@ namespace EmployeeManagement.Application.Commands
         public string DocumentNumber { get; set; } = null!;
         public List<string> PhoneNumbers { get; set; } = new();
         public Guid? ManagerId { get; set; }
-        public string Password { get; set; } = null!;
+        public string? Password { get; set; } = null!;
         public DateTime BirthDate { get; set; }
         public string Role { get; set; } = null!;
     }

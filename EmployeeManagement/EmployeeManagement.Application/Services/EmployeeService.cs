@@ -4,6 +4,7 @@ using EmployeeManagement.Application.Validations;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using static EmployeeManagement.Domain.Dtos.CreateEmployeeResponseDto;
 
 namespace EmployeeManagement.Application.Services
@@ -12,13 +13,13 @@ namespace EmployeeManagement.Application.Services
     {
         private readonly IEmployeeRepository _repository;
         private readonly CreateEmployeeValidator _validator;
-        //private readonly IPasswordHasher _passwordHasher;
+        private readonly IPasswordHasherService _passwordHasherService;
 
-        public EmployeeService(IEmployeeRepository repository, CreateEmployeeValidator validator)
+        public EmployeeService(IEmployeeRepository repository, CreateEmployeeValidator validator, IPasswordHasherService passwordHasherService)
         {
             _repository = repository;
             _validator = validator;
-            //_passwordHasher = passwordHasher;
+            _passwordHasherService = passwordHasherService;
         }
 
         public async Task<CreateEmployeeResponse> CreateAsync(CreateEmployeeCommand command, Guid currentUserId)
@@ -51,7 +52,7 @@ namespace EmployeeManagement.Application.Services
                 DocumentNumber = command.DocumentNumber,
                 PhoneNumbers = command.PhoneNumbers,
                 ManagerId = command.ManagerId,
-                PasswordHash = command.Password,
+                PasswordHash = _passwordHasherService.HashPassword(command.Password),
                 BirthDate = command.BirthDate,
                 Role = newRole
             };
@@ -90,12 +91,17 @@ namespace EmployeeManagement.Application.Services
         {
             var employeeToUpdate = await _repository.GetByIdAsync(id);
 
-            employeeToUpdate!.UpdateProperties(request);
+            var hashedPassword = request.Password is not null ?
+                _passwordHasherService.HashPassword(request.Password!)
+                : employeeToUpdate!.PasswordHash;
+
+            employeeToUpdate!.UpdateProperties(request, hashedPassword);
 
             _repository.UpdateAsync(employeeToUpdate);
 
             await _repository.SaveChangesAsync();
         }
+
 
         public Task<EmployeeDto> GetByEmailAsync(string requestEmail)
         {
@@ -115,8 +121,6 @@ namespace EmployeeManagement.Application.Services
             Role = e.Role.ToString()
         };
 
-
-        // Implement GetByIdAsync, GetAllRoleBellowAndItself, UpdateAsync, DeleteAsync simlarly
     }
 
 }

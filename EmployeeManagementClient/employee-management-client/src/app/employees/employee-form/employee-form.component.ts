@@ -71,7 +71,7 @@ export class EmployeeFormComponent implements OnChanges {
         documentNumber: [this.employee?.documentNumber, Validators.required],
         phoneNumbers: this.fb.array([]),
         managerId: [this.employee?.managerId],
-        password: [this.employee?.password, [Validators.required, Validators.minLength(6)]],
+        password: ["temp123", [Validators.required, Validators.minLength(6)]],
         birthDate: [this.employee?.birthDate, Validators.required],
         role: [this.employee?.role, Validators.required]
       });
@@ -102,10 +102,10 @@ export class EmployeeFormComponent implements OnChanges {
       });
     }
   }
-    ngOnInit(): void {
+  ngOnInit(): void {
     this.employeeService.getAllToLink(this.currentEmployeeId).subscribe({
       next: (data) => (
-            this.employeesToLink = data
+        this.employeesToLink = data
       ),
       error: (err) => console.error('Error fetching employees', err),
     });
@@ -138,6 +138,10 @@ export class EmployeeFormComponent implements OnChanges {
     if (this.employeeForm.valid) {
       if (this.employee) {
         const updatedEmployee: EmployeeDto = this.employeeForm.value;
+
+        if (updatedEmployee.password == 'temp123')
+          delete (updatedEmployee as any).password; 
+        // Remove password if it's the default temp password
         updatedEmployee.id = this.employee.id;
         this.employeeService.update(updatedEmployee).subscribe({
           next: () => {

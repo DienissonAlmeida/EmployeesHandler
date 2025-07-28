@@ -79,7 +79,7 @@ namespace EmployeeManagement.Infrastructure.Migrations
                             Email = "admin@example.com",
                             FirstName = "Admin",
                             LastName = "User",
-                            PasswordHash = "Admin",
+                            PasswordHash = "AQAAAAEAACcQAAAAECHkkydXY43/F9cEVY4JAHQEtMxEC5iWTV4KjlHIPk4Yh8D9hCgjqDqKjKkYg8s8Zg==",
                             PhoneNumbers = "",
                             Role = 3
                         });

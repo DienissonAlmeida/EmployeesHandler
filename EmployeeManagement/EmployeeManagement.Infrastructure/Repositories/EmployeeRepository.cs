@@ -46,14 +46,13 @@ namespace EmployeeManagement.Infrastructure.Repositories
                     PhoneNumbers = x.PhoneNumbers,
                     Role = x.Role.ToString(),
                     ManagerId = x.ManagerId,
-                    Password = x.PasswordHash
                 })
                 .ToListAsync();
         }
         public async Task<List<EmployeeDto>> GetAllRoleAboveAndItself(Role role, Guid currentUserId)
         {
             return await _context.Employees.Where(e =>
-                    e.Role > role || e.Id == currentUserId
+                    e.Role == Role.Director || e.Role == Role.Leader
                 )
                 .Select(x => new EmployeeDto()
                 {

@@ -12,11 +12,14 @@ namespace EmployeeManagement.Api.Controllers.Auth
     {
         private readonly IEmployeeService _service;
         private readonly ITokenService _tokenService;
+        private readonly IPasswordHasherService _passwordHasherService;
 
-        public AuthController(IEmployeeService service, ITokenService tokenService)
+
+        public AuthController(IEmployeeService service, ITokenService tokenService, IPasswordHasherService passwordHasherService)
         {
             _service = service;
             _tokenService = tokenService;
+            _passwordHasherService = passwordHasherService;
         }
 
         [HttpPost("login")]
@@ -24,7 +27,7 @@ namespace EmployeeManagement.Api.Controllers.Auth
         {
             var employee = await _service.GetByEmailAsync(request.Email);
 
-            if (employee == null || employee.Password != request.Password)
+            if (_passwordHasherService.VerifyPassword(request.Password, employee.Password))
                 return Unauthorized("Credenciais inválidas");
 
             var token = _tokenService.GenerateToken(employee);

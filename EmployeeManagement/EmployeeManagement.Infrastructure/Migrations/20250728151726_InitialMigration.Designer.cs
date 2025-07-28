@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EmployeeManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(EmployeeDbContext))]
-    [Migration("20250726192237_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250728151726_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,6 +72,20 @@ namespace EmployeeManagement.Infrastructure.Migrations
                     b.HasIndex("ManagerId");
 
                     b.ToTable("Employees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("3f5a1b2c-7d6e-4a9f-b2c1-8e4f9d123456"),
+                            BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DocumentNumber = "12345678901",
+                            Email = "admin@example.com",
+                            FirstName = "Admin",
+                            LastName = "User",
+                            PasswordHash = "AQAAAAEAACcQAAAAECHkkydXY43/F9cEVY4JAHQEtMxEC5iWTV4KjlHIPk4Yh8D9hCgjqDqKjKkYg8s8Zg==",
+                            PhoneNumbers = "",
+                            Role = 3
+                        });
                 });
 
             modelBuilder.Entity("EmployeeManagement.Domain.Entities.Employee", b =>

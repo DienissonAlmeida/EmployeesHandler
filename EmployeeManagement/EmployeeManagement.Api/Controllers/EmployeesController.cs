@@ -8,10 +8,8 @@ namespace EmployeeManagement.Api.Controllers
     [Route("api/[controller]")]
     public class EmployeesController : ControllerBase
     {
-
         //TODO: We can use mrdiatR for better separation of concerns
         private readonly IEmployeeService _service;
-
         public EmployeesController(IEmployeeService service)
         {
             _service = service;

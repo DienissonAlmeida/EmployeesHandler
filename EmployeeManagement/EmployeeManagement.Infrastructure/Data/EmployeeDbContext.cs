@@ -18,8 +18,8 @@ namespace EmployeeManagement.Infrastructure.Data
                 FirstName = "Admin",
                 LastName = "User",
                 Email = "admin@example.com",
-                Role = Role.Director, // or Enum if you have one
-                PasswordHash = "Admin",
+                Role = Role.Director,
+                PasswordHash = "AQAAAAEAACcQAAAAECHkkydXY43/F9cEVY4JAHQEtMxEC5iWTV4KjlHIPk4Yh8D9hCgjqDqKjKkYg8s8Zg==",
                 BirthDate = SeedData.AdminBirthDate,
                 DocumentNumber = "12345678901",
             };

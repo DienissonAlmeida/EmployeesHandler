@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EmployeeManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,6 +36,11 @@ namespace EmployeeManagement.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Employees",
+                columns: new[] { "Id", "BirthDate", "DocumentNumber", "Email", "FirstName", "LastName", "ManagerId", "PasswordHash", "PhoneNumbers", "Role" },
+                values: new object[] { new Guid("3f5a1b2c-7d6e-4a9f-b2c1-8e4f9d123456"), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "12345678901", "admin@example.com", "Admin", "User", null, "AQAAAAEAACcQAAAAECHkkydXY43/F9cEVY4JAHQEtMxEC5iWTV4KjlHIPk4Yh8D9hCgjqDqKjKkYg8s8Zg==", "", 3 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_DocumentNumber",

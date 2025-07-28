@@ -1,10 +1,13 @@
 ﻿using EmployeeManagement.Application.Commands;
+using EmployeeManagement.Application.Contracts;
+using EmployeeManagement.Application.Security;
 using EmployeeManagement.Application.Services;
 using EmployeeManagement.Application.Validations;
 using EmployeeManagement.Domain.Contracts;
 using EmployeeManagement.Domain.Dtos;
 using EmployeeManagement.Domain.Entities;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
 using Moq;
 
 namespace EmployeeManagement.Tests.Application.Services
@@ -12,16 +15,21 @@ namespace EmployeeManagement.Tests.Application.Services
     public class EmployeeServiceTest
     {
         private readonly Mock<IEmployeeRepository> _repositoryMock = new();
+        private readonly Mock<IPasswordHasherService> _passwordHasherServiceMock = new();
         private readonly EmployeeService _service;
 
         public EmployeeServiceTest()
         {
-            _service = new EmployeeService(_repositoryMock.Object, new CreateEmployeeValidator(_repositoryMock.Object));
+            _service = new EmployeeService(_repositoryMock.Object, new CreateEmployeeValidator(_repositoryMock.Object), _passwordHasherServiceMock.Object);
         }
 
         [Fact]
         public async Task Should_createAsync_successfull()
         {
+
+            var hash = new PasswordHasherService();
+            var haspass = hash.HashPassword("admin123");
+
             //arrange
             var request = new CreateEmployeeCommand
             {

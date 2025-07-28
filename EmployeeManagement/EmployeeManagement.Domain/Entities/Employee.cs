@@ -16,10 +16,10 @@ namespace EmployeeManagement.Domain.Entities
         public string PasswordHash { get; set; } = null!;
         public DateTime BirthDate { get; set; }
 
-        public Role Role { get; set; } 
+        public Role Role { get; set; }
 
 
-        public void UpdateProperties(CreateEmployeeCommand request)
+        public void UpdateProperties(CreateEmployeeCommand request, string passwordHash)
         {
             FirstName = request.FirstName;
             LastName = request.LastName;
@@ -27,7 +27,7 @@ namespace EmployeeManagement.Domain.Entities
             PhoneNumbers = request.PhoneNumbers;
             DocumentNumber = request.DocumentNumber;
             ManagerId = request.ManagerId;
-            PasswordHash = request.Password;
+            PasswordHash = passwordHash;
             Role = (Role)Enum.Parse(typeof(Role), request.Role);
         }
     }
