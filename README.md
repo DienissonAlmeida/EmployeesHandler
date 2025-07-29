@@ -15,15 +15,18 @@ A complete employee registration and management system, built with:
 
 🚀 Getting Started
 🔧 Prerequisites
+
 Docker
-
 Node.js & npm
-
 Angular CLI
 
 ⚙️ Backend Setup (.NET API)
 🐳 Run via Docker
 You can spin up the API and PostgreSQL using Docker Compose:
+
+**Important:**  
+To run Docker Compose, you must be in the same directory where the `docker-compose.yml` file is located:
+
 
 ```bash
 docker-compose up --build
