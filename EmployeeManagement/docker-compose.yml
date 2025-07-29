@@ -15,7 +15,11 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - employee-network
-
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   api:
     build:
       context: .
