@@ -10,6 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/auth.service';
 import { EmployeeDataService } from '../common/employee.data.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-employee-list',
@@ -36,14 +37,15 @@ export class EmployeeListComponent {
     private employeeService: EmployeeService,
     private router: Router,
     private authService: AuthService,
-    private employeeDataService: EmployeeDataService
+    private employeeDataService: EmployeeDataService,
+    private snackBar: MatSnackBar,
   ) { }
 
   ngOnInit(): void {
     const userInfo = this.authService.getUserInfo()!;
 
-     this.currentEmployeeId = userInfo.userId!;
-     this.currentEmployeeName = userInfo.name!;
+    this.currentEmployeeId = userInfo.userId!;
+    this.currentEmployeeName = userInfo.name!;
 
     this.employeeService.getAll(this.currentEmployeeId).subscribe({
       next: (data) => (
@@ -66,8 +68,11 @@ export class EmployeeListComponent {
   }
 
   logout() {
-  this.authService.logout(); 
-  this.router.navigate(['/login']);
+    this.authService.logout();
+    this.router.navigate(['/login']);
+    this.snackBar.open('Logout was made successfull', 'Close', {
+      duration: 5000,
+    });
   }
   deleteEmployee(employee: EmployeeDto) {
     console.log('Delete:', employee);
@@ -75,10 +80,14 @@ export class EmployeeListComponent {
       this.employeeService.delete(employee.id).subscribe({
         next: () => {
           this.employees = this.employees.filter(e => e.id !== employee.id);
+          this.snackBar.open('Employee deleted successfull', 'Close', {
+            duration: 5000,
+          });
         },
         error: (err) => {
-          console.error('Delete failed', err);
-          alert('Failed to delete employee.');
+          this.snackBar.open('Error in delete employee', 'Close', {
+            duration: 5000,
+          });
         }
       });
     }

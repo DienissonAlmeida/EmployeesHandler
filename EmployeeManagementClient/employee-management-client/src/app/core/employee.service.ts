@@ -21,7 +21,7 @@ export interface EmployeeDto {
 export class EmployeeService {
 
 
-  private readonly apiUrl = 'http://localhost:5151/api/Employees';
+  private readonly apiUrl = 'http://localhost:5000/api/Employees';
 
   constructor(private http: HttpClient) { }
 
