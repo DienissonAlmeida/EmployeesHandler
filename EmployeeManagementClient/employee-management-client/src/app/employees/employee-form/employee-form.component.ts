@@ -140,20 +140,21 @@ export class EmployeeFormComponent implements OnChanges {
         const updatedEmployee: EmployeeDto = this.employeeForm.value;
 
         if (updatedEmployee.password == 'temp123')
-          delete (updatedEmployee as any).password; 
-        // Remove password if it's the default temp password
+          delete (updatedEmployee as any).password;
         updatedEmployee.id = this.employee.id;
         this.employeeService.update(updatedEmployee).subscribe({
           next: () => {
-            console.log('Employee created');
-            this.router.navigate(['/employees']); // Go back to list
+            console.log('Employee updated');
+            this.router.navigate(['/employees']);
+            this.snackBar.open('Employee updated successfull', 'Close', {
+              duration: 5000,
+            });
           },
           error: (err) => {
             console.error('Error saving employee', err);
 
             this.snackBar.open(err.error.errorMessage, 'Close', {
               duration: 5000,
-              panelClass: 'snackbar-error'
             });
           }
         });
@@ -164,14 +165,16 @@ export class EmployeeFormComponent implements OnChanges {
         this.employeeService.add(this.currentEmployeeId, newEmployee).subscribe({
           next: () => {
             console.log('Employee created');
-            this.router.navigate(['/employees']); // Go back to list
+            this.router.navigate(['/employees']);
+            this.snackBar.open('Employee registered successfull', 'Close', {
+              duration: 5000,
+            });
           },
           error: (err) => {
             console.error('Error saving employee', err);
 
             this.snackBar.open(err.error.errorMessage, 'Close', {
               duration: 5000,
-              panelClass: 'snackbar-error'
             });
           }
         });

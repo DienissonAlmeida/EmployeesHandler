@@ -20,7 +20,9 @@ namespace EmployeeManagement.Application.Security
         public bool VerifyPassword(string hashedPassword, string providedPassword)
         {
             var result = _hasher.VerifyHashedPassword(null, hashedPassword, providedPassword);
-            return result == PasswordVerificationResult.Success;
+
+
+            return result == PasswordVerificationResult.Success || result == PasswordVerificationResult.SuccessRehashNeeded;
         }
     }
 }

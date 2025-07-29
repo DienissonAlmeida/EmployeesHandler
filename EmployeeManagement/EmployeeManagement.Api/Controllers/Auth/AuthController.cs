@@ -27,7 +27,7 @@ namespace EmployeeManagement.Api.Controllers.Auth
         {
             var employee = await _service.GetByEmailAsync(request.Email);
 
-            if (_passwordHasherService.VerifyPassword(request.Password, employee.Password))
+            if (!_passwordHasherService.VerifyPassword(employee.Password, request.Password))
                 return Unauthorized("Credenciais inválidas");
 
             var token = _tokenService.GenerateToken(employee);

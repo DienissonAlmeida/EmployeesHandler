@@ -14,3 +14,7 @@
   justify-content: flex-end;
   margin-top: 16px;
 }
+.snackbar-error {
+  background-color: #f44336;
+  color: #fff;
+}
