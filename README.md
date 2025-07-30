@@ -63,7 +63,6 @@ Role-based access control is implemented:
 ✅ JWT Authentication (Login, Logout, Role-based access)  
 ✅ Register and edit employees  
 ✅ Role selection restricted by current user's level  
-✅ Manager selection via dropdown (linked employees)  
 ✅ Employee listing with edit/delete actions  
 ✅ API protected with Angular `AuthGuard`  
 ✅ Admin user seeded automatically in the database  
